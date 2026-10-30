@@ -241,6 +241,10 @@ PAGE = r"""<!doctype html>
     sit in a repository's history for months without ever raising an error.</p>
     <p class="lede">Point this at a public repository and it reads the history
     looking for failures that nobody noticed at the time, because nothing failed.</p>
+    
+    <p class="lede" style="font-size:.85rem; color:var(--fainter)">Large
+    repositories take a while to read. Small and medium ones return in
+    under a minute.</p>
 
     <form id="f">
       <input id="u" type="url" placeholder="https://github.com/owner/repository" required>
