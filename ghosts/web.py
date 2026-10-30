@@ -22,10 +22,12 @@ from pydantic import BaseModel
 from ghosts.ingest import IngestError, cleanup_repo, scan_repo
 from ghosts.narrate import narrate
 from ghosts.rules import run_all
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="Ghosts in the Machine")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+app.mount("/static", StaticFiles(directory=PROJECT_ROOT / "static"), name="static")
 MAX_COMMITS = int(os.environ.get("GHOSTS_MAX_COMMITS", "500"))
 SCAN_TIMEOUT = int(os.environ.get("GHOSTS_SCAN_TIMEOUT", "240"))
 
@@ -213,6 +215,14 @@ PAGE = r"""<!doctype html>
 
   audio { width: 100%; margin-top: 20px; filter: invert(.88) hue-rotate(180deg); }
 
+  .audio-controls { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 22px; }
+  .audio-controls .ac-btn {
+    border: none; background: none; color: var(--fainter);
+    font-family: var(--mono); font-size: .72rem; padding: 0;
+    cursor: pointer; letter-spacing: .1em;
+  }
+  .audio-controls .ac-btn:hover { color: var(--accent); }
+
   .dismissed { margin-top: 80px; padding-top: 26px; border-top: 1px solid var(--line); }
   .dismissed > h3 {
     font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em;
@@ -253,6 +263,16 @@ PAGE = r"""<!doctype html>
     <div id="progress"></div>
     <div id="err"></div>
   </header>
+
+  <div class="audio-controls">
+    <audio id="intro" preload="none" src="/static/intro.mp3"></audio>
+    <button type="button" data-audio="intro" onclick="playIntro()"
+            class="ac-btn">▸ listen</button>
+
+    <audio id="ambient" preload="none" src="/static/ambient.mp3" loop></audio>
+    <button type="button" data-audio="ambient" onclick="toggleAmbient()"
+            class="ac-btn">▸ sound on</button>
+  </div>
 
   <div id="out"></div>
 
@@ -412,6 +432,27 @@ fetch('/featured').then(r => r.json()).then(d => {
   if (!d.exhibits || !d.exhibits.length) return;
   out.innerHTML = d.exhibits.map(e => render(e, AUDIO)).join('');
 }).catch(() => {});
+
+// Quiet audio controls in the header. No autoplay — browsers block it.
+const introEl = $('#intro'), ambientEl = $('#ambient');
+ambientEl.volume = 0.25;
+
+function playIntro() {
+  introEl.currentTime = 0;          // restart from the beginning every time
+  introEl.play().catch(() => {});
+}
+
+function toggleAmbient() {
+  const btn = document.querySelector('[data-audio="ambient"]');
+  if (ambientEl.paused) {
+    ambientEl.play().then(() => {
+      btn.textContent = '■ sound off';
+    }).catch(() => {});
+  } else {
+    ambientEl.pause();
+    btn.textContent = '▸ sound on';
+  }
+}
 </script>
 </body>
 </html>
