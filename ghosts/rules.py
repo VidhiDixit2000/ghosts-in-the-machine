@@ -145,6 +145,9 @@ def rule_empty_files(commits: list[CommitInfo], repo: Any) -> list[Finding]:
                 continue
             if not _blob_is_blank(d.b_blob_sha, d.b_blob_size, d.b_blob):
                 continue
+            if d.path in seen_paths:
+                continue
+            seen_paths.add(d.path)
 
             fill = _first_fill(timeline.get(d.path, []), i)
 
