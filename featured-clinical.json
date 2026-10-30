@@ -1,0 +1,142 @@
+{
+  "repository": "https://github.com/VidhiDixit2000/clinical-rules-engine",
+  "scan": {
+    "capped": false,
+    "commits_scanned": 14,
+    "max_commits": 500
+  },
+  "findings": [
+    {
+      "rule_id": "R1-EMPTY-FILE",
+      "commit_sha": "c6341e9aa4eb8d04b259390f41f3c04c72e42a14",
+      "date": "2026-08-07",
+      "author": "Vidhi Dixit",
+      "file_path": "backend/requirements.txt",
+      "summary": "backend/requirements.txt was committed empty and stayed empty for 79 days before it was filled.",
+      "evidence": {
+        "commit_message": "Initial commit",
+        "change_type": "A",
+        "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "blob_size": 0,
+        "days_until_filled": 79,
+        "filled_in_commit": "c07291ee4b2e9713ceef06f9f49a1f4fa14ed414",
+        "filled_on": "2026-10-25",
+        "still_empty_at_head": false
+      }
+    },
+    {
+      "rule_id": "R1-EMPTY-FILE",
+      "commit_sha": "254c771b3da543fd5d7891e61d0cfb4fd8519184",
+      "date": "2026-08-08",
+      "author": "Vidhi Dixit",
+      "file_path": "Supabase/seed.sql",
+      "summary": "Supabase/seed.sql was committed empty and stayed empty for 78 days before it was filled.",
+      "evidence": {
+        "commit_message": "Added schema.sql and seed.sql",
+        "change_type": "A",
+        "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "blob_size": 0,
+        "days_until_filled": 78,
+        "filled_in_commit": "5d2439be1ef8193796886be4a8f6368397aba540",
+        "filled_on": "2026-10-25",
+        "still_empty_at_head": false
+      }
+    },
+    {
+      "rule_id": "R1-EMPTY-FILE",
+      "commit_sha": "ab1c78368c2df1ad8f992bb0447175fffa8069dd",
+      "date": "2026-08-08",
+      "author": "Vidhi Dixit",
+      "file_path": "readme.md",
+      "summary": "readme.md was committed empty and the file no longer exists at HEAD.",
+      "evidence": {
+        "commit_message": "Add README",
+        "change_type": "A",
+        "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "blob_size": 0,
+        "days_until_filled": null,
+        "filled_in_commit": null,
+        "filled_on": null,
+        "still_empty_at_head": false
+      }
+    }
+  ],
+  "interpretation": {
+    "model": "google/gemma-3-27b-it",
+    "provider": "openrouter",
+    "generated_at": "2026-10-30T18:04:51+00:00",
+    "threshold": 6,
+    "groups": [
+      {
+        "group_id": "g1",
+        "title": "Empty files committed in initial state",
+        "significance": 6,
+        "reason": "Multiple files were initially committed empty, suggesting a possible workflow issue or incomplete initial setup. While eventually filled, the long delay is noteworthy.",
+        "finding_indices": [
+          0,
+          1,
+          2
+        ],
+        "findings": [
+          {
+            "rule_id": "R1-EMPTY-FILE",
+            "commit_sha": "c6341e9aa4eb8d04b259390f41f3c04c72e42a14",
+            "date": "2026-08-07",
+            "author": "Vidhi Dixit",
+            "file_path": "backend/requirements.txt",
+            "summary": "backend/requirements.txt was committed empty and stayed empty for 79 days before it was filled.",
+            "evidence": {
+              "commit_message": "Initial commit",
+              "change_type": "A",
+              "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+              "blob_size": 0,
+              "days_until_filled": 79,
+              "filled_in_commit": "c07291ee4b2e9713ceef06f9f49a1f4fa14ed414",
+              "filled_on": "2026-10-25",
+              "still_empty_at_head": false
+            }
+          },
+          {
+            "rule_id": "R1-EMPTY-FILE",
+            "commit_sha": "254c771b3da543fd5d7891e61d0cfb4fd8519184",
+            "date": "2026-08-08",
+            "author": "Vidhi Dixit",
+            "file_path": "Supabase/seed.sql",
+            "summary": "Supabase/seed.sql was committed empty and stayed empty for 78 days before it was filled.",
+            "evidence": {
+              "commit_message": "Added schema.sql and seed.sql",
+              "change_type": "A",
+              "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+              "blob_size": 0,
+              "days_until_filled": 78,
+              "filled_in_commit": "5d2439be1ef8193796886be4a8f6368397aba540",
+              "filled_on": "2026-10-25",
+              "still_empty_at_head": false
+            }
+          },
+          {
+            "rule_id": "R1-EMPTY-FILE",
+            "commit_sha": "ab1c78368c2df1ad8f992bb0447175fffa8069dd",
+            "date": "2026-08-08",
+            "author": "Vidhi Dixit",
+            "file_path": "readme.md",
+            "summary": "readme.md was committed empty and the file no longer exists at HEAD.",
+            "evidence": {
+              "commit_message": "Add README",
+              "change_type": "A",
+              "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+              "blob_size": 0,
+              "days_until_filled": null,
+              "filled_in_commit": null,
+              "filled_on": null,
+              "still_empty_at_head": false
+            }
+          }
+        ],
+        "narration": "The initial commit included `backend/requirements.txt` and `Supabase/seed.sql` as empty files. Both files remained empty for 79 and 78 days respectively, before being populated with content on 2026-10-25. The `readme.md` file was also initially committed empty and was later removed from the repository. \n\nThese files were added to the repository with commit messages indicating their creation, despite containing no content at the time of the commits. The `backend/requirements.txt` file is currently populated with content, while `Supabase/seed.sql` also contains content.",
+        "narration_skipped": null
+      }
+    ],
+    "warning": null
+  }
+}

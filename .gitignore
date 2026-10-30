@@ -1,0 +1,5 @@
+.env
+findings.json
+findings.narrated.json
+__pycache__/
+*.pyc

@@ -1,0 +1,4 @@
+gitpython==3.2.1
+fastapi
+uvicorn
+pydantic

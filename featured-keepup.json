@@ -1,0 +1,249 @@
+{
+  "repository": "https://github.com/VidhiDixit2000/keepup-inventory",
+  "scan": {
+    "capped": false,
+    "commits_scanned": 19,
+    "max_commits": 500
+  },
+  "findings": [
+    {
+      "rule_id": "R1-EMPTY-FILE",
+      "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+      "date": "2026-07-30",
+      "author": "Vidhi Dixit",
+      "file_path": "frontend/public/manifest.json",
+      "summary": "frontend/public/manifest.json was committed empty and the file no longer exists at HEAD.",
+      "evidence": {
+        "commit_message": "Initial commit",
+        "change_type": "A",
+        "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "blob_size": 0,
+        "days_until_filled": null,
+        "filled_in_commit": null,
+        "filled_on": null,
+        "still_empty_at_head": false
+      }
+    },
+    {
+      "rule_id": "R2-DB-URI-CREDENTIALS",
+      "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+      "date": "2026-07-30",
+      "author": "Vidhi Dixit",
+      "file_path": "database.py",
+      "summary": "A credential-shaped value entered the tree at database.py:7. It is gone from the working tree, but it is still in history.",
+      "evidence": {
+        "commit_message": "Initial commit",
+        "line_number": 7,
+        "redacted_line": "#url=\"postgresql://postgres:[REDACTED]@localhost:5432/postgres\"",
+        "matched_pattern": "R2-DB-URI-CREDENTIALS",
+        "present_in_history": true,
+        "removed_from_working_tree": true
+      }
+    },
+    {
+      "rule_id": "R2-DB-URI-CREDENTIALS",
+      "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+      "date": "2026-07-30",
+      "author": "Vidhi Dixit",
+      "file_path": "docker-compose.yml",
+      "summary": "A credential-shaped value entered the tree at docker-compose.yml:20. It is gone from the working tree, but it is still in history.",
+      "evidence": {
+        "commit_message": "Initial commit",
+        "line_number": 20,
+        "redacted_line": "      DATABASE_URL: postgresql://postgres:[REDACTED]@postgres-db:5432/fastapi-db",
+        "matched_pattern": "R2-DB-URI-CREDENTIALS",
+        "present_in_history": true,
+        "removed_from_working_tree": true
+      }
+    },
+    {
+      "rule_id": "R2-SECRET-ASSIGNMENT",
+      "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+      "date": "2026-07-30",
+      "author": "Vidhi Dixit",
+      "file_path": "docker-compose.yml",
+      "summary": "A credential-shaped value entered the tree at docker-compose.yml:9. It is gone from the working tree, but it is still in history.",
+      "evidence": {
+        "commit_message": "Initial commit",
+        "line_number": 9,
+        "redacted_line": "      POSTGRES_PASSWORD: [REDACTED]",
+        "matched_pattern": "R2-SECRET-ASSIGNMENT",
+        "present_in_history": true,
+        "removed_from_working_tree": true
+      }
+    },
+    {
+      "rule_id": "R2-ENV-FILE-ADDED",
+      "commit_sha": "ee7cf656f6d7d6409ab8821beea486e3b95146b2",
+      "date": "2026-08-15",
+      "author": "Vidhi Dixit",
+      "file_path": "frontend/.env.development",
+      "summary": "An environment file (frontend/.env.development) was committed. Whatever it held is in history from here on.",
+      "evidence": {
+        "commit_message": "Configure frontend API URLs for development and production",
+        "matched_pattern": "env_file",
+        "present_in_history": true,
+        "removed_from_working_tree": false
+      }
+    },
+    {
+      "rule_id": "R2-ENV-FILE-ADDED",
+      "commit_sha": "ee7cf656f6d7d6409ab8821beea486e3b95146b2",
+      "date": "2026-08-15",
+      "author": "Vidhi Dixit",
+      "file_path": "frontend/.env.production",
+      "summary": "An environment file (frontend/.env.production) was committed. Whatever it held is in history from here on.",
+      "evidence": {
+        "commit_message": "Configure frontend API URLs for development and production",
+        "matched_pattern": "env_file",
+        "present_in_history": true,
+        "removed_from_working_tree": false
+      }
+    }
+  ],
+  "interpretation": {
+    "model": "google/gemma-3-27b-it",
+    "provider": "openrouter",
+    "generated_at": "2026-10-30T18:05:06+00:00",
+    "threshold": 6,
+    "groups": [
+      {
+        "group_id": "g3",
+        "title": "Committed .env Files",
+        "significance": 9,
+        "reason": "Environment files committed to repository, potentially containing secrets in history.",
+        "finding_indices": [
+          4,
+          5
+        ],
+        "findings": [
+          {
+            "rule_id": "R2-ENV-FILE-ADDED",
+            "commit_sha": "ee7cf656f6d7d6409ab8821beea486e3b95146b2",
+            "date": "2026-08-15",
+            "author": "Vidhi Dixit",
+            "file_path": "frontend/.env.development",
+            "summary": "An environment file (frontend/.env.development) was committed. Whatever it held is in history from here on.",
+            "evidence": {
+              "commit_message": "Configure frontend API URLs for development and production",
+              "matched_pattern": "env_file",
+              "present_in_history": true,
+              "removed_from_working_tree": false
+            }
+          },
+          {
+            "rule_id": "R2-ENV-FILE-ADDED",
+            "commit_sha": "ee7cf656f6d7d6409ab8821beea486e3b95146b2",
+            "date": "2026-08-15",
+            "author": "Vidhi Dixit",
+            "file_path": "frontend/.env.production",
+            "summary": "An environment file (frontend/.env.production) was committed. Whatever it held is in history from here on.",
+            "evidence": {
+              "commit_message": "Configure frontend API URLs for development and production",
+              "matched_pattern": "env_file",
+              "present_in_history": true,
+              "removed_from_working_tree": false
+            }
+          }
+        ],
+        "narration": "On 2026-08-15, the files `frontend/.env.development` and `frontend/.env.production` were committed with the message \u201cConfigure frontend API URLs for development and production.\u201d Both files remain in the repository\u2019s history.\n\nThe commit message indicates an intention to configure API URLs, but the committed files themselves contained whatever data existed at the time of the commit. The files were not subsequently removed from the working tree.",
+        "narration_skipped": null
+      },
+      {
+        "group_id": "g1",
+        "title": "Initial Commit Credentials",
+        "significance": 8,
+        "reason": "Multiple credentials (DB URI and password) committed in the initial commit and still present in history.",
+        "finding_indices": [
+          1,
+          2,
+          3
+        ],
+        "findings": [
+          {
+            "rule_id": "R2-DB-URI-CREDENTIALS",
+            "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+            "date": "2026-07-30",
+            "author": "Vidhi Dixit",
+            "file_path": "database.py",
+            "summary": "A credential-shaped value entered the tree at database.py:7. It is gone from the working tree, but it is still in history.",
+            "evidence": {
+              "commit_message": "Initial commit",
+              "line_number": 7,
+              "redacted_line": "#url=\"postgresql://postgres:[REDACTED]@localhost:5432/postgres\"",
+              "matched_pattern": "R2-DB-URI-CREDENTIALS",
+              "present_in_history": true,
+              "removed_from_working_tree": true
+            }
+          },
+          {
+            "rule_id": "R2-DB-URI-CREDENTIALS",
+            "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+            "date": "2026-07-30",
+            "author": "Vidhi Dixit",
+            "file_path": "docker-compose.yml",
+            "summary": "A credential-shaped value entered the tree at docker-compose.yml:20. It is gone from the working tree, but it is still in history.",
+            "evidence": {
+              "commit_message": "Initial commit",
+              "line_number": 20,
+              "redacted_line": "      DATABASE_URL: postgresql://postgres:[REDACTED]@postgres-db:5432/fastapi-db",
+              "matched_pattern": "R2-DB-URI-CREDENTIALS",
+              "present_in_history": true,
+              "removed_from_working_tree": true
+            }
+          },
+          {
+            "rule_id": "R2-SECRET-ASSIGNMENT",
+            "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+            "date": "2026-07-30",
+            "author": "Vidhi Dixit",
+            "file_path": "docker-compose.yml",
+            "summary": "A credential-shaped value entered the tree at docker-compose.yml:9. It is gone from the working tree, but it is still in history.",
+            "evidence": {
+              "commit_message": "Initial commit",
+              "line_number": 9,
+              "redacted_line": "      POSTGRES_PASSWORD: [REDACTED]",
+              "matched_pattern": "R2-SECRET-ASSIGNMENT",
+              "present_in_history": true,
+              "removed_from_working_tree": true
+            }
+          }
+        ],
+        "narration": "The initial commit on 2026-07-30 included a database URL with credentials in `database.py` on line 7 and in `docker-compose.yml` on line 20, as well as a database password in `docker-compose.yml` on line 9. These credential-shaped values were removed from the current working tree, but remain in the commit history. The commit message for this initial commit was \u201cInitial commit\u201d.\n\nThe database URL and password are present in the repository\u2019s history, specifically in the initial commit. These values are still accessible to anyone with access to the repository\u2019s history.",
+        "narration_skipped": null
+      },
+      {
+        "group_id": "g2",
+        "title": "Empty Manifest File",
+        "significance": 3,
+        "reason": "An empty manifest file was initially committed but later filled in. Low impact.",
+        "finding_indices": [
+          0
+        ],
+        "findings": [
+          {
+            "rule_id": "R1-EMPTY-FILE",
+            "commit_sha": "bb366db551dbf321c0bca166c8e6be0b928c574e",
+            "date": "2026-07-30",
+            "author": "Vidhi Dixit",
+            "file_path": "frontend/public/manifest.json",
+            "summary": "frontend/public/manifest.json was committed empty and the file no longer exists at HEAD.",
+            "evidence": {
+              "commit_message": "Initial commit",
+              "change_type": "A",
+              "blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+              "blob_size": 0,
+              "days_until_filled": null,
+              "filled_in_commit": null,
+              "filled_on": null,
+              "still_empty_at_head": false
+            }
+          }
+        ],
+        "narration": null,
+        "narration_skipped": "Scored 3, below the threshold of 6."
+      }
+    ],
+    "warning": null
+  }
+}
