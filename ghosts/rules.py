@@ -133,6 +133,7 @@ def _first_fill(entries: list[tuple], after_index: int) -> Optional[tuple]:
 def rule_empty_files(commits: list[CommitInfo], repo: Any) -> list[Finding]:
     timeline = _build_timeline(commits)
     findings: list[Finding] = []
+    seen_paths: set[str] = set()
 
     for i, c in enumerate(commits):
         for d in c.diffs:
