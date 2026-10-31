@@ -37,7 +37,7 @@ _CONTENT_EXTENSIONS = {
 _LEGITIMATELY_EMPTY = {"__init__.py", ".gitkeep", ".gitignore", "py.typed"}
 
 _EXCLUDED_DIRS = {"test", "tests", "fixtures", "__pycache__"}
-
+_CHANGE_WORDS = {"A": "added", "M": "modified", "D": "deleted", "R": "renamed"}
 
 def _is_excluded_path(path: str) -> bool:
     parts = path.replace("\\", "/").split("/")

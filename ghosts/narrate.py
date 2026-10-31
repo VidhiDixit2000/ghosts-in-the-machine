@@ -25,12 +25,16 @@ from typing import Any, Optional
 from ghosts.finding import Finding
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "google/gemma-3-27b-it" 
+MODEL = "google/gemma-4-31b-it:free"
 ENV_VARS = ("OPENROUTER_API_KEY", "GEMMA_API_KEY")
 
 # Groups scoring at or above this get narrated. Everything else is kept and
 # reported with its score, so you can see what the model dismissed.
 DEFAULT_THRESHOLD = 6
+
+# rule_id used by the anomaly channel. Declared here rather than imported,
+# because ghosts.anomaly imports this module.
+RULE_ANOMALY = "A1-ANOMALY"
 
 # Findings per grouping call. Small repos never hit this.
 BATCH_SIZE = 40
@@ -263,50 +267,34 @@ _NARRATE_SYSTEM = (
 
 _NARRATE_PROMPT = """Write a short account of this finding for someone who has
 just inherited this repository and is reading its history for the first time.
- 
-Two or three short paragraphs.
- 
-FIRST, find where what someone evidently intended and what git actually
-recorded came apart. That gap is the story. It is also why the failure was
-silent: the person had every reason to believe things had gone the other way,
-so there was nothing to investigate.
- 
-Illustrations of the shape, not a list to match against -- the gap in the
-evidence below may look like none of these:
- 
-  - a credential commented out rather than deleted (intended: removed;
-    recorded: still present)
-  - a file committed empty and filled much later (intended: content;
-    recorded: nothing, for however long)
-  - a commit message describing something the commit did not do
- 
-Open with whatever that gap turns out to be, concretely.
- 
-THEN say what it cost, or could have cost, for this repository specifically.
-If the evidence does not support a claim about cost, write nothing about cost.
-Do not write a sentence observing that the evidence is silent.
- 
-RULES, all firm:
- 
-  - Every sentence must carry a fact from the evidence below. If a sentence
-    would be equally true of any repository, cut it.
-  - Banned, because they carry no information: "could have allowed
-    unauthorized access", "poses a potential security risk", "is not specified
-    in the available evidence", "sensitive information", "best practice".
-  - Do not restate the finding summary. The reader already has it.
-  - Do not speculate about why the author did it.
-  - Credentials are redacted. Never guess at a redacted value.
-  - Plain language. The subject is eerie without help -- no theatrical
-    phrasing, no "ghostly", no second person address.
- 
+
+Two or three short paragraphs. Cover:
+
+  - what actually happened, concretely
+  - why nothing failed loudly at the time, so nobody noticed
+  - what it cost, or could have cost
+
+Ground every sentence in the evidence below. If the evidence does not say
+something, do not say it either. Do not speculate about the author's intent.
+Credentials are redacted; never guess at a redacted value.
+
+A commit is a snapshot, not a sequence. All changes listed for one commit
+happened together, atomically. There is no order between them: nothing in a
+commit happens before or after anything else in that same commit. Never
+describe one change as following another within a commit.
+
+Write plainly. The subject is eerie enough without help -- no theatrical
+language, no "ghostly whispers", no second person address.
+
 Return plain text only, no JSON and no headings.
- 
+
 TITLE: {title}
- 
+
 EVIDENCE:
 {findings}
 """
- 
+
+
 def _narrate_group(group: dict, findings: list[Finding], key: str) -> str:
     members = [findings[i] for i in group["finding_indices"]]
     prompt = _NARRATE_PROMPT.format(
@@ -320,7 +308,7 @@ def _narrate_group(group: dict, findings: list[Finding], key: str) -> str:
             {"role": "user", "content": prompt},
         ],
         max_tokens=700,
-        temperature=0.1,
+        temperature=0.3,
     )
     return reply.strip()
 
@@ -374,9 +362,22 @@ def narrate(
             print(f"  ! {base['warning']}")
         return base
 
+    # Findings from the anomaly channel were already judged by the model on the
+    # way in (is_failure plus a confidence that had to clear min_confidence).
+    # Scoring them a second time here, with a different question and a
+    # different prompt, lets the second answer silently overrule the first.
+    # A group holding one of them skips the threshold; it has had its hearing.
+    pre_judged = {
+        i for i, f in enumerate(findings)
+        if f.rule_id == RULE_ANOMALY
+    }
+
     for group in groups:
         group["findings"] = [findings[i].to_dict() for i in group["finding_indices"]]
-        if group["significance"] < threshold:
+        group["pre_judged"] = any(
+            i in pre_judged for i in group["finding_indices"]
+        )
+        if group["significance"] < threshold and not group["pre_judged"]:
             group["narration"] = None
             group["narration_skipped"] = (
                 f"Scored {group['significance']}, below the threshold of {threshold}."

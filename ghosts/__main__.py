@@ -14,6 +14,7 @@ import sys
 
 from ghosts.ingest import IngestError, cleanup_repo, scan_repo
 from ghosts.rules import run_all
+from ghosts.anomaly import find_anomalies
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -42,7 +43,10 @@ def main(argv: list[str] | None = None) -> int:
         "--threshold", type=int, default=6,
         help="Narrate groups scoring at or above this, 1-10 (default: 6)",
     )
-
+    parser.add_argument(
+        "--anomalies", action="store_true",
+        help="Also look for unusual commits and ask the model what they mean",
+    )
     args = parser.parse_args(argv)
 
     repo = None
@@ -57,6 +61,16 @@ def main(argv: list[str] | None = None) -> int:
 
         findings = run_all(commits, repo)
 
+        if args.anomalies:
+            extra, anomaly_meta = find_anomalies(commits)
+            findings.extend(extra)
+            findings.sort(key=lambda f: (f.date, f.rule_id, f.file_path))
+            print(
+                f"  anomaly channel: {anomaly_meta['candidates_scored']} unusual, "
+                f"{anomaly_meta['named_as_failures']} judged real",
+                file=sys.stderr,
+            )
+        
         if not findings:
             print("\nNothing found. The history is quiet.")
         else:
