@@ -25,7 +25,7 @@ from typing import Any, Optional
 from ghosts.finding import Finding
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL = "google/gemma-4-31b-it:free"
+MODEL = "google/gemma-3-27b-it"
 ENV_VARS = ("OPENROUTER_API_KEY", "GEMMA_API_KEY")
 
 # Groups scoring at or above this get narrated. Everything else is kept and
@@ -267,29 +267,50 @@ _NARRATE_SYSTEM = (
 
 _NARRATE_PROMPT = """Write a short account of this finding for someone who has
 just inherited this repository and is reading its history for the first time.
-
-Two or three short paragraphs. Cover:
-
-  - what actually happened, concretely
-  - why nothing failed loudly at the time, so nobody noticed
-  - what it cost, or could have cost
-
-Ground every sentence in the evidence below. If the evidence does not say
-something, do not say it either. Do not speculate about the author's intent.
-Credentials are redacted; never guess at a redacted value.
-
-A commit is a snapshot, not a sequence. All changes listed for one commit
-happened together, atomically. There is no order between them: nothing in a
-commit happens before or after anything else in that same commit. Never
-describe one change as following another within a commit.
-
-Write plainly. The subject is eerie enough without help -- no theatrical
-language, no "ghostly whispers", no second person address.
-
+ 
+Two or three short paragraphs.
+ 
+FIRST, find where what someone evidently intended and what git actually
+recorded came apart. That gap is the story. It is also why the failure was
+silent: the person had every reason to believe things had gone the other way,
+so there was nothing to investigate.
+ 
+Illustrations of the shape, not a list to match against -- the gap in the
+evidence below may look like none of these:
+ 
+  - a credential commented out rather than deleted (intended: removed;
+    recorded: still present)
+  - a file committed empty and filled much later (intended: content;
+    recorded: nothing, for however long)
+  - a commit message describing something the commit did not do
+ 
+Open with whatever that gap turns out to be, concretely.
+ 
+THEN say what it cost, or could have cost, for this repository specifically.
+If the evidence does not support a claim about cost, write nothing about cost.
+Do not write a sentence observing that the evidence is silent.
+ 
+RULES, all firm:
+ 
+  - Every sentence must carry a fact from the evidence below. If a sentence
+    would be equally true of any repository, cut it.
+  - Banned, because they carry no information: "could have allowed
+    unauthorized access", "poses a potential security risk", "is not specified
+    in the available evidence", "sensitive information", "best practice".
+  - Do not restate the finding summary. The reader already has it.
+  - Do not speculate about why the author did it.
+  - Credentials are redacted. Never guess at a redacted value.
+  - A commit is a snapshot, not a sequence. All changes listed for one
+    commit happened together, atomically. There is no order between them:
+    nothing in a commit happens before or after anything else in that same
+    commit. Never describe one change as following another within a commit.
+  - Plain language. The subject is eerie without help -- no theatrical
+    phrasing, no "ghostly", no second person address.
+ 
 Return plain text only, no JSON and no headings.
-
+ 
 TITLE: {title}
-
+ 
 EVIDENCE:
 {findings}
 """
@@ -308,7 +329,7 @@ def _narrate_group(group: dict, findings: list[Finding], key: str) -> str:
             {"role": "user", "content": prompt},
         ],
         max_tokens=700,
-        temperature=0.3,
+        temperature=0.1,
     )
     return reply.strip()
 
