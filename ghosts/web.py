@@ -23,6 +23,7 @@ from ghosts.ingest import IngestError, cleanup_repo, scan_repo
 from ghosts.narrate import narrate
 from ghosts.rules import run_all
 from fastapi.staticfiles import StaticFiles
+from ghosts.anomaly import find_anomalies
 
 app = FastAPI(title="Ghosts in the Machine")
 
@@ -46,6 +47,11 @@ def _scan(url: str) -> dict:
     try:
         commits, meta, repo = scan_repo(url, MAX_COMMITS)
         findings = run_all(commits, repo)
+
+        extra, _ = find_anomalies(commits, verbose=False)
+        findings.extend(extra)
+        findings.sort(key=lambda f: (f.date, f.rule_id, f.file_path))
+
         interpretation = narrate(findings, verbose=False)
         return {
             "repository": url,
@@ -171,11 +177,15 @@ PAGE = r"""<!doctype html>
     background: var(--panel); color: var(--ink); font-size: 0.95rem;
   }
 
-  section.result { margin-top: 70px; }
-  .scanned {
-    font-family: var(--mono); font-size: 0.75rem; color: var(--fainter);
-    letter-spacing: 0.06em; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  /* each exhibit opens with a rule and its repository; the gap between exhibits
+     must beat the largest gap inside one (.dismissed, 80px) */
+  section.result { margin-top: 70px; padding-top: 30px; border-top: 2px solid var(--fainter); }
+  section.result + section.result { margin-top: 150px; }
+  .exhibit-title {
+    font-size: clamp(1.7rem, 5vw, 2.2rem); line-height: 1.2; font-weight: 700;
+    letter-spacing: -0.01em; margin: 0 0 8px; overflow-wrap: anywhere;
   }
+  .scanned { font-family: var(--mono); font-size: 0.75rem; color: var(--dim); letter-spacing: 0.06em; }
 
   article.ghost {
     margin: 54px 0 0; opacity: 0;
@@ -315,6 +325,12 @@ function esc(s) {
     c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// owner/repo from a GitHub URL; anything unrecognised is shown as given.
+function repoName(url) {
+  const m = String(url || '').match(/github\.com[/:]([^/\s]+)\/([^/\s?#]+)/);
+  return m ? `${m[1]}/${m[2].replace(/\.git$/, '')}` : String(url || '');
+}
+
 function paragraphs(text) {
   return String(text || '').split(/\n\s*\n/).filter(p => p.trim())
     .map(p => `<p>${esc(p.trim())}</p>`).join('');
@@ -362,7 +378,8 @@ function render(data, audioMap) {
   const scanned = data.scan || {};
 
   let html = `<section class="result">
-    <div class="scanned">${esc(data.repository)} · ${esc(scanned.commits_scanned || 0)} commits read${scanned.capped ? ' · history capped' : ''}</div>`;
+    <h2 class="exhibit-title">${esc(repoName(data.repository))}</h2>
+    <div class="scanned">${esc(scanned.commits_scanned || 0)} commits read${scanned.capped ? ' · history capped' : ''}</div>`;
 
   if (!groups.length) {
     html += `<div class="quiet">
