@@ -303,7 +303,11 @@ RULES, all firm:
   - A commit is a snapshot, not a sequence. All changes listed for one
     commit happened together, atomically. There is no order between them:
     nothing in a commit happens before or after anything else in that same
-    commit. Never describe one change as following another within a commit.
+    commit. When several changes share a commit, describe them as
+    simultaneous. Use "in the same commit", "alongside", "together with". Do
+    not use "after", "then", "following", "subsequently", or "immediately" to
+    relate two changes within one commit. Those words are only correct
+    between different commits, and only when you have both dates.
   - Plain language. The subject is eerie without help -- no theatrical
     phrasing, no "ghostly", no second person address.
  

@@ -204,8 +204,16 @@ Rules:
 - name it in plain words. Do not invent a category; describe what happened.
 - A commit is a snapshot, not a sequence. All changes listed for one commit
   happened together, atomically. There is no order between them: nothing in a
-  commit happens before or after anything else in that same commit. Never
-  describe one change as following another within a commit.
+  commit happens before or after anything else in that same commit. When
+  several changes share a commit, describe them as simultaneous. Use "in the
+  same commit", "alongside", "together with". Do not use "after", "then",
+  "following", "subsequently", or "immediately" to relate two changes within
+  one commit. Those words are only correct between different commits, and
+  only when you have both dates.
+- changes_in_this_commit_unordered is an unordered snapshot: this file's part
+  of the commit, possibly cut short, and not necessarily all of it. Other
+  files from the same commit may appear as separate candidates. The order of
+  files, candidates and diff lines says nothing about time.
 - Describe only what the diff and the commit message show. Do not speculate
   about motive, cause, or consequence.
 - Never guess at a redacted value.
@@ -232,7 +240,7 @@ def _ask(candidates: list[dict], key: str) -> list[dict]:
             "commit_message": c["message"],
             "date": c["date"],
             "why_flagged": c["signals"],
-            "diff": c["patch"],
+            "changes_in_this_commit_unordered": c["patch"],
         }
         for i, c in enumerate(candidates)
     ]
